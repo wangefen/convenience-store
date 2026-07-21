@@ -22,7 +22,7 @@ public class CategoryController {
     //@RequestBody:将前端的json请求转换为对应的java类(category)
     @PostMapping
     public void add(@RequestBody Category category){
-        categoryService.add(category);
+        categoryService.insert(category);
     }//@RequestBody把前端请求体中的 JSON 数据读取出来，按照方法参数指定的 Category 类型，转换成一个 Category 对象。
 
     @PutMapping("/{id}")

@@ -8,7 +8,7 @@ import java.util.List;
 public interface CategoryService {
     List<Category> findAll();
 
-    void add(Category category);
+    void insert(Category category);
 
     void update(Category category);
 

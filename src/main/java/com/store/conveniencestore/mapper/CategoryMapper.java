@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface CategoryMapper {
-    @Select("select  * from category")
+    @Select("select id, name from category")
     List<Category> findAll();
 
     @Insert("INSERT INTO category(name) VALUES(#{name})")

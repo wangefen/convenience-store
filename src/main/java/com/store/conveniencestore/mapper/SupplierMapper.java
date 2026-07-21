@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface SupplierMapper {
-    @Select("SELECT * FROM supplier")
+    @Select("SELECT id, name, contact, phone, address FROM supplier")
     List<Supplier> findAll();
 
     @Select("SELECT * from supplier where id = #{id}")
