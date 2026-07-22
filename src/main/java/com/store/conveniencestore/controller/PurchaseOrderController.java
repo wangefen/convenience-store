@@ -1,5 +1,7 @@
 package com.store.conveniencestore.controller;
 
+import com.store.conveniencestore.dto.PurchaseOrderCreateRequest;
+import com.store.conveniencestore.dto.PurchaseOrderResponse;
 import com.store.conveniencestore.entity.PurchaseOrder;
 import com.store.conveniencestore.service.PurchaseOrderService;
 import org.springframework.web.bind.annotation.*;
@@ -54,13 +56,8 @@ public class PurchaseOrderController {
      * POST http://localhost:8080/purchase-orders
      */
     @PostMapping
-    public PurchaseOrder insert(
-            @RequestBody PurchaseOrder purchaseOrder) {
-
-        purchaseOrderService.insert(purchaseOrder);
-
-        // 返回包含数据库自增 id 的对象
-        return purchaseOrder;
+    public PurchaseOrderResponse createOrder(@RequestBody PurchaseOrderCreateRequest request){
+        return purchaseOrderService.createOrder(request);
     }
 
     /**

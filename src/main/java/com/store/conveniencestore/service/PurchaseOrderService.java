@@ -1,5 +1,7 @@
 package com.store.conveniencestore.service;
 
+import com.store.conveniencestore.dto.PurchaseOrderCreateRequest;
+import com.store.conveniencestore.dto.PurchaseOrderResponse;
 import com.store.conveniencestore.entity.PurchaseOrder;
 
 import java.util.List;
@@ -22,9 +24,11 @@ public interface PurchaseOrderService {
     PurchaseOrder findById(Integer id);
 
     /**
-     * 新增采购订单。
+     * 创建采购订单，并同时创建该订单下的多条采购明细。
      */
-    void insert(PurchaseOrder purchaseOrder);
+    PurchaseOrderResponse createOrder(
+            PurchaseOrderCreateRequest request
+    );
 
     /**
      * 修改采购订单。
