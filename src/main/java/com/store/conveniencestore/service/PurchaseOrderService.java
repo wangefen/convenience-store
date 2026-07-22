@@ -26,9 +26,7 @@ public interface PurchaseOrderService {
     /**
      * 创建采购订单，并同时创建该订单下的多条采购明细。
      */
-    PurchaseOrderResponse createOrder(
-            PurchaseOrderCreateRequest request
-    );
+    PurchaseOrderResponse createOrder(PurchaseOrderCreateRequest request);
 
     /**
      * 修改采购订单。

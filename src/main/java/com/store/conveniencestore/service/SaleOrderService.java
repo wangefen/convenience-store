@@ -1,5 +1,7 @@
 package com.store.conveniencestore.service;
 
+import com.store.conveniencestore.dto.SaleOrderCreateRequest;
+import com.store.conveniencestore.dto.SaleOrderResponse;
 import com.store.conveniencestore.entity.SaleOrder;
 
 import java.util.List;
@@ -13,7 +15,13 @@ public interface SaleOrderService {
 
     SaleOrder findById(Integer id);
 
-    void insert(SaleOrder saleOrder);
+    /**
+     * 创建一张销售订单和多条销售明细。
+     */
+    SaleOrderResponse createOrder(
+            SaleOrderCreateRequest request
+    );
+
 
     void update(SaleOrder saleOrder);
 

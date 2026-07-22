@@ -1,5 +1,7 @@
 package com.store.conveniencestore.controller;
 
+import com.store.conveniencestore.dto.SaleOrderCreateRequest;
+import com.store.conveniencestore.dto.SaleOrderResponse;
 import com.store.conveniencestore.entity.SaleOrder;
 import com.store.conveniencestore.service.SaleOrderService;
 import org.springframework.web.bind.annotation.*;
@@ -48,18 +50,15 @@ public class SaleOrderController {
     }
 
     /**
-     * 新增销售订单。
-     *
-     * POST http://localhost:8080/sale-orders
+     * 一次创建销售订单和多条销售明细。
      */
     @PostMapping
-    public SaleOrder insert(@RequestBody SaleOrder saleOrder) {
+    public SaleOrderResponse createOrder(
+            @RequestBody SaleOrderCreateRequest request) {
 
-        saleOrderService.insert(saleOrder);
-
-        // 返回包含自增 id 和销售时间的对象
-        return saleOrder;
+        return saleOrderService.createOrder(request);
     }
+
 
     /**
      * 修改销售订单。
