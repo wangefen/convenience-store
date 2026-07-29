@@ -29,5 +29,25 @@ public interface ProductMapper {
             @Param("quantity") Integer quantity
     );
 
+    /**
+     * 原子扣减库存。
+     *
+     * 只有商品存在并且库存充足时才会执行扣减。
+     *
+     * 返回值：
+     * 1：扣减成功
+     * 0：商品不存在或库存不足
+     */
+    @Update("""
+        UPDATE product
+        SET stock = stock - #{quantity}
+        WHERE id = #{productId}
+          AND stock >= #{quantity}
+        """)
+    int decreaseStock(
+            @Param("productId") Integer productId,
+            @Param("quantity") Integer quantity
+    );
+
     @Delete("DELETE FROM product WHERE id = #{id}")
     void delete(Integer id);}

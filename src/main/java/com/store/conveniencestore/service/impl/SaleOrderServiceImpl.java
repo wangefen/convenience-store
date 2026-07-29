@@ -136,6 +136,29 @@ public class SaleOrderServiceImpl implements SaleOrderService {
             }
 
             /*
+             * 原子扣减库存。
+             *
+             * SQL 会同时检查库存是否充足，
+             * 因此不会出现负库存。
+             */
+            int affectedRows = productMapper.decreaseStock(
+                    product.getId(),
+                    itemRequest.quantity()
+            );
+
+            /*
+             * 商品前面已经确认存在，
+             * 所以这里返回0，通常表示库存不足。
+             */
+            if (affectedRows == 0) {
+                throw new IllegalArgumentException(
+                        "商品库存不足，商品编号："
+                                + product.getId()
+                );
+            }
+
+
+            /*
              * 第四步：创建销售明细实体对象。
              */
             SaleItem saleItem = new SaleItem();
