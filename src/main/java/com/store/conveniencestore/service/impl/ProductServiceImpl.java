@@ -29,6 +29,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void insert(Product product){
+        /*
+         * 新建商品不能直接指定库存。
+         * 初始库存统一为0，后续通过采购增加。
+         */
+        product.setStock(0);
         productMapper.insert(product);
     }
 

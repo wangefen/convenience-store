@@ -5,6 +5,7 @@ import com.store.conveniencestore.dto.PurchaseOrderCreateRequest;
 import com.store.conveniencestore.dto.PurchaseOrderResponse;
 import com.store.conveniencestore.entity.PurchaseItem;
 import com.store.conveniencestore.entity.PurchaseOrder;
+import com.store.conveniencestore.mapper.ProductMapper;
 import com.store.conveniencestore.mapper.PurchaseItemMapper;
 import com.store.conveniencestore.mapper.PurchaseOrderMapper;
 import com.store.conveniencestore.service.PurchaseOrderService;
@@ -19,12 +20,15 @@ import java.util.List;
 public class PurchaseOrderServiceImpl implements PurchaseOrderService{
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final PurchaseItemMapper purchaseItemMapper;
+    private final ProductMapper productMapper;
 
     //因为这里用到了mapper,是spring提供的管理组件，所以要依赖注入，自己写的类就不用直接new就行
     public PurchaseOrderServiceImpl(PurchaseOrderMapper purchaseOrderMapper,
-                                    PurchaseItemMapper purchaseItemMapper){
+                                    PurchaseItemMapper purchaseItemMapper,
+                                    ProductMapper productMapper){
         this.purchaseOrderMapper = purchaseOrderMapper;
         this.purchaseItemMapper = purchaseItemMapper;
+        this.productMapper = productMapper;
     }
 
 
@@ -74,12 +78,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                         "商品编号不能为空"
                 );
             }
-            if (itemRequest.quantity() <= 0){
+            if (itemRequest.quantity() == null || itemRequest.quantity() <= 0){
                 throw new IllegalArgumentException(
                         "采购量必须大于0"
                 );
             }
-            if (itemRequest.purchasePrice() == null ){
+            if (itemRequest.purchasePrice() == null || itemRequest.purchasePrice().signum() <= 0){
 
                 throw new IllegalArgumentException(
                         "采购价格必须大于0"
@@ -93,6 +97,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
             purchaseItem.setPurchasePrice(itemRequest.purchasePrice());
 
             purchaseItemMapper.insert(purchaseItem);
+
+            int affectedRows = productMapper.increaseStock(
+                    purchaseItem.getProductId(),
+                    purchaseItem.getQuantity()
+            );
+
+            if (affectedRows == 0){
+                throw new IllegalArgumentException(
+                        "商品编号不存在，商品编号："+itemRequest.productId()
+                );
+            }
+
             savedItems.add(purchaseItem);
         }
 

@@ -7,6 +7,7 @@ public class Product {
     private String name;
     private Integer categoryId;
     private BigDecimal salePrice;
+    private Integer stock;
 
     public Integer getId() {
         return id;
@@ -38,6 +39,14 @@ public class Product {
 
     public void setSalePrice(BigDecimal salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
     @Override

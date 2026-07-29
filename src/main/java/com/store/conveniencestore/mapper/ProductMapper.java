@@ -7,10 +7,10 @@ import java.util.List;
 
 @Mapper
 public interface ProductMapper {
-    @Select("SELECT id, name, category_id, sale_price FROM  product")
+    @Select("SELECT id, name, category_id, sale_price, stock FROM  product")
     List<Product> findAll();
 
-    @Select("SELECT * FROM product WHERE id = #{id}")
+    @Select("SELECT id, name, category_id, sale_price, stock FROM product WHERE id = #{id}")
     Product findById(Integer id);
 
     @Insert("INSERT INTO product(name, category_id, sale_price) VALUES (#{name}, #{categoryId}, #{salePrice})")//#{name}相当于mybatis去执行product.getname
@@ -19,6 +19,15 @@ public interface ProductMapper {
 
     @Update("UPDATE  product SET name = #{name}, category_id = #{categoryId}, sale_price = #{salePrice} WHERE id = #{id}")
     void update(Product product);
+
+    @Update("UPDATE product SET stock = stock + #{quantity} WHERE id = #{productId}")
+    int increaseStock(
+            //Mapper 中增、删、改方法返回的 int，一般表示 SQL 影响的数据行数；
+            // return 由 MyBatis 自动处理。
+            //@Param 会告诉 MyBatis：把第一个值 10 标记为 productI把第二个值 5 标记为 quantity
+            @Param("productId") Integer productId,
+            @Param("quantity") Integer quantity
+    );
 
     @Delete("DELETE FROM product WHERE id = #{id}")
     void delete(Integer id);}

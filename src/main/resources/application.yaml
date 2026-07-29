@@ -12,3 +12,17 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
+logging:
+  file:
+    name: logs/covenience-store.log
+
+  level:
+    root: INFO
+    com.store.conveniencestore: DEBUG
+
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 50
+      total-size-cap: 1GB
+
