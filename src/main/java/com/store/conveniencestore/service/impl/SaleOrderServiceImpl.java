@@ -3,9 +3,11 @@ package com.store.conveniencestore.service.impl;
 import com.store.conveniencestore.dto.SaleItemCreateRequest;
 import com.store.conveniencestore.dto.SaleOrderCreateRequest;
 import com.store.conveniencestore.dto.SaleOrderResponse;
+import com.store.conveniencestore.entity.InventoryTransaction;
 import com.store.conveniencestore.entity.Product;
 import com.store.conveniencestore.entity.SaleItem;
 import com.store.conveniencestore.entity.SaleOrder;
+import com.store.conveniencestore.mapper.InventoryTransactionMapper;
 import com.store.conveniencestore.mapper.ProductMapper;
 import com.store.conveniencestore.mapper.SaleItemMapper;
 import com.store.conveniencestore.mapper.SaleOrderMapper;
@@ -26,15 +28,18 @@ public class SaleOrderServiceImpl implements SaleOrderService {
     private final SaleOrderMapper saleOrderMapper;
     private final SaleItemMapper saleItemMapper;
     private final ProductMapper productMapper;
+    private final InventoryTransactionMapper inventoryTransactionMapper;
 
     public SaleOrderServiceImpl(
             SaleOrderMapper saleOrderMapper,
             SaleItemMapper saleItemMapper,
-            ProductMapper productMapper) {
+            ProductMapper productMapper,
+            InventoryTransactionMapper inventoryTransactionMapper) {
 
         this.saleOrderMapper = saleOrderMapper;
         this.saleItemMapper = saleItemMapper;
         this.productMapper = productMapper;
+        this.inventoryTransactionMapper = inventoryTransactionMapper;
     }
 
     @Override
@@ -174,6 +179,31 @@ public class SaleOrderServiceImpl implements SaleOrderService {
             saleItem.setSalePrice(product.getSalePrice());
 
             saleItemMapper.insert(saleItem);
+            /*
+             * 记录销售出库流水。
+             *
+             * 销售会减少库存，所以使用负数。
+             */
+            InventoryTransaction inventoryTransaction =
+                    new InventoryTransaction();
+
+            inventoryTransaction.setProductId(
+                    saleItem.getProductId()
+            );
+            inventoryTransaction.setChangeQuantity(
+                    -saleItem.getQuantity()
+            );
+            inventoryTransaction.setBusinessType("SALE");
+            inventoryTransaction.setBusinessId(
+                    saleOrder.getId()
+            );
+            inventoryTransaction.setCreateTime(
+                    LocalDateTime.now()
+            );
+
+            inventoryTransactionMapper.insert(
+                    inventoryTransaction
+            );
             savedItems.add(saleItem);
         }
 

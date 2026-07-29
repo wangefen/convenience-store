@@ -3,8 +3,10 @@ package com.store.conveniencestore.service.impl;
 import com.store.conveniencestore.dto.PurchaseItemCreateRequest;
 import com.store.conveniencestore.dto.PurchaseOrderCreateRequest;
 import com.store.conveniencestore.dto.PurchaseOrderResponse;
+import com.store.conveniencestore.entity.InventoryTransaction;
 import com.store.conveniencestore.entity.PurchaseItem;
 import com.store.conveniencestore.entity.PurchaseOrder;
+import com.store.conveniencestore.mapper.InventoryTransactionMapper;
 import com.store.conveniencestore.mapper.ProductMapper;
 import com.store.conveniencestore.mapper.PurchaseItemMapper;
 import com.store.conveniencestore.mapper.PurchaseOrderMapper;
@@ -21,14 +23,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final PurchaseItemMapper purchaseItemMapper;
     private final ProductMapper productMapper;
+    private final InventoryTransactionMapper inventoryTransactionMapper;
 
     //因为这里用到了mapper,是spring提供的管理组件，所以要依赖注入，自己写的类就不用直接new就行
     public PurchaseOrderServiceImpl(PurchaseOrderMapper purchaseOrderMapper,
                                     PurchaseItemMapper purchaseItemMapper,
-                                    ProductMapper productMapper){
+                                    ProductMapper productMapper,
+                                    InventoryTransactionMapper inventoryTransactionMapper){
         this.purchaseOrderMapper = purchaseOrderMapper;
         this.purchaseItemMapper = purchaseItemMapper;
         this.productMapper = productMapper;
+        this.inventoryTransactionMapper = inventoryTransactionMapper;
     }
 
 
@@ -108,6 +113,30 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                         "商品编号不存在，商品编号："+itemRequest.productId()
                 );
             }
+
+            /*
+             * 记录采购入库流水。
+             */
+            InventoryTransaction inventoryTransaction =
+                    new InventoryTransaction();
+
+            inventoryTransaction.setProductId(
+                    purchaseItem.getProductId()
+            );
+            inventoryTransaction.setChangeQuantity(
+                    purchaseItem.getQuantity()
+            );
+            inventoryTransaction.setBusinessType("PURCHASE");
+            inventoryTransaction.setBusinessId(
+                    purchaseOrder.getId()
+            );
+            inventoryTransaction.setCreateTime(
+                    LocalDateTime.now()
+            );
+
+            inventoryTransactionMapper.insert(
+                    inventoryTransaction
+            );
 
             savedItems.add(purchaseItem);
         }
