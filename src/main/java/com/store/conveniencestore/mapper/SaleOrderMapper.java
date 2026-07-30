@@ -17,7 +17,7 @@ public interface SaleOrderMapper {
      * 查询全部销售订单。
      */
     @Select("""
-            SELECT id, sale_time
+            SELECT id, sale_time, status
             FROM sale_order
             """)
     List<SaleOrder> findAll();
@@ -26,7 +26,7 @@ public interface SaleOrderMapper {
      * 根据 id 查询销售订单。
      */
     @Select("""
-            SELECT id, sale_time
+            SELECT id, sale_time, status
             FROM sale_order
             WHERE id = #{id}
             """)
@@ -36,8 +36,8 @@ public interface SaleOrderMapper {
      * 新增销售订单。
      */
     @Insert("""
-            INSERT INTO sale_order(sale_time)
-            VALUES(#{saleTime})
+            INSERT INTO sale_order(sale_time, status)
+            VALUES(#{saleTime}, #{status})
             """)
     @Options(
             useGeneratedKeys = true,
@@ -46,22 +46,11 @@ public interface SaleOrderMapper {
     )
     void insert(SaleOrder saleOrder);
 
-    /**
-     * 修改销售订单时间。
-     */
     @Update("""
             UPDATE sale_order
-            SET sale_time = #{saleTime}
+            SET status = 'CANCELLED'
             WHERE id = #{id}
+                AND status = 'COMPLETED'
             """)
-    void update(SaleOrder saleOrder);
-
-    /**
-     * 根据 id 删除销售订单。
-     */
-    @Delete("""
-            DELETE FROM sale_order
-            WHERE id = #{id}
-            """)
-    void delete(Integer id);
+    int cancelIfCompleted(@Param("id") Integer id);
 }

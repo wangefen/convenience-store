@@ -22,8 +22,5 @@ public interface SaleOrderService {
             SaleOrderCreateRequest request
     );
 
-
-    void update(SaleOrder saleOrder);
-
-    void delete(Integer id);
+    SaleOrder cancel(Integer id);
 }

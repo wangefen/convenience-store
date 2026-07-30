@@ -85,26 +85,4 @@ public interface PurchaseItemMapper {
     void insert(PurchaseItem purchaseItem);
 
 
-    /**
-     * 修改采购明细。
-     */
-    @Update("""
-            UPDATE purchase_item
-            SET purchase_order_id = #{purchaseOrderId},
-                product_id = #{productId},
-                quantity = #{quantity},
-                purchase_price = #{purchasePrice}
-            WHERE id = #{id}
-            """)
-    void update(PurchaseItem purchaseItem);
-
-
-    /**
-     * 根据采购明细 id 删除。
-     */
-    @Delete("""
-            DELETE FROM purchase_item
-            WHERE id = #{id}
-            """)
-    void delete(Integer id);
 }

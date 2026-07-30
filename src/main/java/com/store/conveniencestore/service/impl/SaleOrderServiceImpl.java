@@ -82,6 +82,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
          */
         SaleOrder saleOrder = new SaleOrder();
         saleOrder.setSaleTime(LocalDateTime.now());
+        saleOrder.setStatus("COMPLETED");
 
         /*
          * insert 后，数据库生成的自增 id
@@ -213,17 +214,108 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         return new SaleOrderResponse(
                 saleOrder.getId(),
                 saleOrder.getSaleTime(),
+                saleOrder.getStatus(),
                 savedItems
         );
     }
 
+    /**
+     * 取消销售订单。
+     *
+     * 状态、库存和库存流水必须处于同一个事务中。
+     */
+    @Transactional
     @Override
-    public void update(SaleOrder saleOrder) {
-        saleOrderMapper.update(saleOrder);
-    }
+    public SaleOrder cancel(Integer id) {
 
-    @Override
-    public void delete(Integer id) {
-        saleOrderMapper.delete(id);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "销售订单编号必须大于0"
+            );
+        }
+
+        SaleOrder saleOrder =
+                saleOrderMapper.findById(id);
+
+        if (saleOrder == null) {
+            throw new IllegalArgumentException(
+                    "销售订单不存在，订单编号：" + id
+            );
+        }
+
+        if ("CANCELLED".equals(saleOrder.getStatus())) {
+            throw new IllegalArgumentException(
+                    "销售订单已经取消，不能重复取消"
+            );
+        }
+
+        /*
+         * 原子修改状态。
+         * 并发取消时只有一个请求能够成功。
+         */
+        int affectedRows =
+                saleOrderMapper.cancelIfCompleted(id);
+
+        if (affectedRows == 0) {
+            throw new IllegalStateException(
+                    "销售订单状态已经发生变化，取消失败"
+            );
+        }
+
+        List<SaleItem> saleItems =
+                saleItemMapper.findBySaleOrderId(id);
+
+        if (saleItems == null || saleItems.isEmpty()) {
+            throw new IllegalStateException(
+                    "销售订单没有对应的销售明细"
+            );
+        }
+
+        for (SaleItem saleItem : saleItems) {
+
+            /*
+             * 销售时扣减了库存，
+             * 取消销售时把库存加回来。
+             */
+            int stockAffectedRows =
+                    productMapper.increaseStock(
+                            saleItem.getProductId(),
+                            saleItem.getQuantity()
+                    );
+
+            if (stockAffectedRows == 0) {
+                throw new IllegalStateException(
+                        "商品不存在，无法恢复库存，商品编号："
+                                + saleItem.getProductId()
+                );
+            }
+
+            /*
+             * 原销售流水为负数，例如 -3；
+             * 取消销售记录正数 +3。
+             */
+            InventoryTransaction transaction =
+                    new InventoryTransaction();
+
+            transaction.setProductId(
+                    saleItem.getProductId()
+            );
+            transaction.setChangeQuantity(
+                    saleItem.getQuantity()
+            );
+            transaction.setBusinessType(
+                    "SALE_CANCEL"
+            );
+            transaction.setBusinessId(id);
+            transaction.setCreateTime(
+                    LocalDateTime.now()
+            );
+
+            inventoryTransactionMapper.insert(
+                    transaction
+            );
+        }
+
+        return saleOrderMapper.findById(id);
     }
 }

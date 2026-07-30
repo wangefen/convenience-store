@@ -63,20 +63,4 @@ public interface SaleItemMapper {
             keyColumn = "id"
     )
     void insert(SaleItem saleItem);
-
-    @Update("""
-            UPDATE sale_item
-            SET sale_order_id = #{saleOrderId},
-                product_id = #{productId},
-                quantity = #{quantity},
-                sale_price = #{salePrice}
-            WHERE id = #{id}
-            """)
-    void update(SaleItem saleItem);
-
-    @Delete("""
-            DELETE FROM sale_item
-            WHERE id = #{id}
-            """)
-    void delete(Integer id);
 }

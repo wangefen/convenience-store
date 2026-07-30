@@ -11,6 +11,7 @@ import java.util.List;
 public record SaleOrderResponse(
         Integer id,
         LocalDateTime saleTime,
+        String status,
         List<SaleItem> items
 ) {
 }

@@ -61,30 +61,14 @@ public class SaleOrderController {
 
 
     /**
-     * 修改销售订单。
+     * 取消销售订单。
      *
-     * PUT http://localhost:8080/sale-orders/1
+     * POST /sale-orders/1/cancel
      */
-    @PutMapping("/{id}")
-    public SaleOrder update(
-            @PathVariable Integer id,
-            @RequestBody SaleOrder saleOrder) {
+    @PostMapping("/{id}/cancel")
+    public SaleOrder cancel(
+            @PathVariable Integer id) {
 
-        // 路径中的 id 表示修改哪一条销售订单
-        saleOrder.setId(id);
-
-        saleOrderService.update(saleOrder);
-
-        return saleOrderService.findById(id);
-    }
-
-    /**
-     * 删除销售订单。
-     *
-     * DELETE http://localhost:8080/sale-orders/1
-     */
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        saleOrderService.delete(id);
+        return saleOrderService.cancel(id);
     }
 }
