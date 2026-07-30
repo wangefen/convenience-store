@@ -24,18 +24,5 @@ public interface PurchaseItemService {
      */
     List<PurchaseItem> findByPurchaseOrderId(Integer purchaseOrderId);
 
-    /**
-     * 新增一条采购明细。
-     */
-    void insert(PurchaseItem purchaseItem);
 
-    /**
-     * 修改采购明细。
-     */
-    void update(PurchaseItem purchaseItem);
-
-    /**
-     * 删除采购明细。
-     */
-    void delete(Integer id);
 }

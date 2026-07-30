@@ -27,6 +27,13 @@ public class PurchaseOrder {
      */
     private LocalDateTime purchaseTime;
 
+    /**
+     * 订单状态：
+     * COMPLETED：已完成
+     * CANCELLED：已取消
+     */
+    private String status;
+
     public Integer getId() {
         return id;
     }
@@ -51,6 +58,14 @@ public class PurchaseOrder {
         this.purchaseTime = purchaseTime;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "PurchaseOrder{" +
@@ -59,4 +74,6 @@ public class PurchaseOrder {
                 ", purchaseTime=" + purchaseTime +
                 '}';
     }
+
+
 }

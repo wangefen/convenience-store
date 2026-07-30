@@ -67,6 +67,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setSupplierId(request.supplierId());
         purchaseOrder.setPurchaseTime(LocalDateTime.now());
+        purchaseOrder.setStatus("COMPLETED");
 
         purchaseOrderMapper.insert(purchaseOrder);
 
@@ -145,23 +146,112 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                 purchaseOrder.getId(),
                 purchaseOrder.getSupplierId(),
                 purchaseOrder.getPurchaseTime(),
+                purchaseOrder.getStatus(),
                 savedItems
         );
     }
 
     /**
-     * 修改采购订单。
+     * 取消采购订单。
+     *
+     * 订单状态、库存和冲销流水必须在同一个事务中处理。
      */
+    @Transactional
     @Override
-    public void update(PurchaseOrder purchaseOrder) {
-        purchaseOrderMapper.update(purchaseOrder);
-    }
+    public PurchaseOrder cancel(Integer id) {
 
-    /**
-     * 删除采购订单。
-     */
-    @Override
-    public void delete(Integer id) {
-        purchaseOrderMapper.delete(id);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "采购订单编号必须大于0"
+            );
+        }
+
+        PurchaseOrder purchaseOrder =
+                purchaseOrderMapper.findById(id);
+
+        if (purchaseOrder == null) {
+            throw new IllegalArgumentException(
+                    "采购订单不存在，订单编号：" + id
+            );
+        }
+
+        if ("CANCELLED".equals(purchaseOrder.getStatus())) {
+            throw new IllegalArgumentException(
+                    "采购订单已经取消，不能重复取消"
+            );
+        }
+
+        /*
+         * 原子修改订单状态。
+         *
+         * 并发取消时，只有一个请求能将
+         * COMPLETED 修改为 CANCELLED。
+         */
+        int affectedRows =
+                purchaseOrderMapper.cancelIfCompleted(id);
+
+        if (affectedRows == 0) {
+            throw new IllegalStateException(
+                    "采购订单状态已经发生变化，取消失败"
+            );
+        }
+
+        List<PurchaseItem> purchaseItems =
+                purchaseItemMapper.findByPurchaseOrderId(id);
+
+        if (purchaseItems == null || purchaseItems.isEmpty()) {
+            throw new IllegalStateException(
+                    "采购订单没有对应的采购明细"
+            );
+        }
+
+        for (PurchaseItem purchaseItem : purchaseItems) {
+
+            /*
+             * 采购时增加了库存，
+             * 取消采购时需要把库存减回来。
+             */
+            int stockAffectedRows =
+                    productMapper.decreaseStock(
+                            purchaseItem.getProductId(),
+                            purchaseItem.getQuantity()
+                    );
+
+            if (stockAffectedRows == 0) {
+                throw new IllegalStateException(
+                        "商品不存在或当前库存不足，无法取消采购订单，商品编号："
+                                + purchaseItem.getProductId()
+                );
+            }
+
+            /*
+             * 记录采购取消产生的反向流水。
+             *
+             * 原采购为 +10，
+             * 取消采购则记录 -10。
+             */
+            InventoryTransaction transaction =
+                    new InventoryTransaction();
+
+            transaction.setProductId(
+                    purchaseItem.getProductId()
+            );
+            transaction.setChangeQuantity(
+                    -purchaseItem.getQuantity()
+            );
+            transaction.setBusinessType(
+                    "PURCHASE_CANCEL"
+            );
+            transaction.setBusinessId(id);
+            transaction.setCreateTime(
+                    LocalDateTime.now()
+            );
+
+            inventoryTransactionMapper.insert(
+                    transaction
+            );
+        }
+
+        return purchaseOrderMapper.findById(id);
     }
 }

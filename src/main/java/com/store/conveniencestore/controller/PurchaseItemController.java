@@ -61,47 +61,4 @@ public class PurchaseItemController {
                 .findByPurchaseOrderId(purchaseOrderId);
     }
 
-    /**
-     * 新增采购明细。
-     *
-     * POST http://localhost:8080/purchase-items
-     */
-    @PostMapping
-    public PurchaseItem insert(
-            @RequestBody PurchaseItem purchaseItem) {
-
-        purchaseItemService.insert(purchaseItem);
-
-        // 返回包含数据库自增 id 的采购明细对象
-        return purchaseItem;
-    }
-
-    /**
-     * 修改采购明细。
-     *
-     * PUT http://localhost:8080/purchase-items/1
-     */
-    @PutMapping("/{id}")
-    public PurchaseItem update(
-            @PathVariable Integer id,
-            @RequestBody PurchaseItem purchaseItem) {
-
-        // 路径中的 id 表示修改哪一条明细
-        purchaseItem.setId(id);
-
-        purchaseItemService.update(purchaseItem);
-
-        // 修改后重新查询并返回最新数据
-        return purchaseItemService.findById(id);
-    }
-
-    /**
-     * 删除采购明细。
-     *
-     * DELETE http://localhost:8080/purchase-items/1
-     */
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        purchaseItemService.delete(id);
-    }
 }

@@ -12,7 +12,7 @@ public interface PurchaseOrderMapper {
      * 查询全部采购订单。
      */
     @Select("""
-            SELECT id, supplier_id, purchase_time
+            SELECT id, supplier_id, purchase_time, status
             FROM purchase_order
             """)
     List<PurchaseOrder> findAll();
@@ -21,7 +21,7 @@ public interface PurchaseOrderMapper {
      * 根据 id 查询采购订单。
      */
     @Select("""
-            SELECT id, supplier_id, purchase_time
+            SELECT id, supplier_id, purchase_time, status
             FROM purchase_order
             WHERE id = #{id}
             """)
@@ -31,8 +31,8 @@ public interface PurchaseOrderMapper {
      * 新增采购订单。
      */
     @Insert("""
-            INSERT INTO purchase_order(supplier_id, purchase_time)
-            VALUES(#{supplierId}, #{purchaseTime})
+            INSERT INTO purchase_order(supplier_id, purchase_time, status)
+            VALUES(#{supplierId}, #{purchaseTime}, #{status})
             """)
     @Options(
             useGeneratedKeys = true,
@@ -42,22 +42,20 @@ public interface PurchaseOrderMapper {
     void insert(PurchaseOrder purchaseOrder);
 
     /**
-     * 修改采购订单。
+     * 只有处于 COMPLETED 状态的订单才能取消。
+     *
+     * 返回值：
+     * 1：取消成功
+     * 0：订单不存在、已经取消或状态发生变化
      */
     @Update("""
-            UPDATE purchase_order
-            SET supplier_id = #{supplierId},
-                purchase_time = #{purchaseTime}
-            WHERE id = #{id}
-            """)
-    void update(PurchaseOrder purchaseOrder);
+        UPDATE purchase_order
+        SET status = 'CANCELLED'
+        WHERE id = #{id}
+          AND status = 'COMPLETED'
+        """)
+    int cancelIfCompleted(@Param("id") Integer id);
 
-    /**
-     * 删除采购订单。
-     */
-    @Delete("""
-            DELETE FROM purchase_order
-            WHERE id = #{id}
-            """)
-    void delete(Integer id);
+
+
 }

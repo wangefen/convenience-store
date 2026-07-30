@@ -61,31 +61,14 @@ public class PurchaseOrderController {
     }
 
     /**
-     * 修改采购订单。
+     * 取消采购订单。
      *
-     * PUT http://localhost:8080/purchase-orders/1
+     * POST /purchase-orders/1/cancel
      */
-    @PutMapping("/{id}")
-    public PurchaseOrder update(
-            @PathVariable Integer id,
-            @RequestBody PurchaseOrder purchaseOrder) {
+    @PostMapping("/{id}/cancel")
+    public PurchaseOrder cancel(
+            @PathVariable Integer id) {
 
-        // 路径里的 id 表示修改哪一条采购订单
-        purchaseOrder.setId(id);
-
-        purchaseOrderService.update(purchaseOrder);
-
-        // 修改后重新查询最新数据
-        return purchaseOrderService.findById(id);
-    }
-
-    /**
-     * 删除采购订单。
-     *
-     * DELETE http://localhost:8080/purchase-orders/1
-     */
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        purchaseOrderService.delete(id);
+        return purchaseOrderService.cancel(id);
     }
 }

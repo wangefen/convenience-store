@@ -50,27 +50,4 @@ public class PurchaseItemServiceImpl implements PurchaseItemService {
                 .findByPurchaseOrderId(purchaseOrderId);
     }
 
-    /**
-     * 新增采购明细。
-     */
-    @Override
-    public void insert(PurchaseItem purchaseItem) {
-        purchaseItemMapper.insert(purchaseItem);
-    }
-
-    /**
-     * 修改采购明细。
-     */
-    @Override
-    public void update(PurchaseItem purchaseItem) {
-        purchaseItemMapper.update(purchaseItem);
-    }
-
-    /**
-     * 删除采购明细。
-     */
-    @Override
-    public void delete(Integer id) {
-        purchaseItemMapper.delete(id);
-    }
 }

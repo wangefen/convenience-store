@@ -28,13 +28,10 @@ public interface PurchaseOrderService {
      */
     PurchaseOrderResponse createOrder(PurchaseOrderCreateRequest request);
 
-    /**
-     * 修改采购订单。
-     */
-    void update(PurchaseOrder purchaseOrder);
 
     /**
-     * 根据 id 删除采购订单。
+     * 取消采购订单。
      */
-    void delete(Integer id);
+    PurchaseOrder cancel(Integer id);
+
 }

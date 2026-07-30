@@ -12,6 +12,7 @@ public record PurchaseOrderResponse(
         Integer id,
         Integer supplierId,
         LocalDateTime purchaseTime,
+        String status,
         List<PurchaseItem> items
 ) {
 }
