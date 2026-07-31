@@ -9,8 +9,7 @@ package com.store.conveniencestore.exception;
  *
  * 最终对应 HTTP 404 状态码。
  */
-public class ResourceNotFoundException
-        extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
     /**
      * 创建资源不存在异常。

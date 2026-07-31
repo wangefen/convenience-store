@@ -1,6 +1,7 @@
 package com.store.conveniencestore.service.impl;
 
 import com.store.conveniencestore.entity.Product;
+import com.store.conveniencestore.exception.ResourceNotFoundException;
 import com.store.conveniencestore.mapper.ProductMapper;
 import com.store.conveniencestore.service.ProductService;
 import org.apache.ibatis.annotations.Insert;
@@ -24,7 +25,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findById(Integer id) {
-        return productMapper.findById(id);
+        Product product = productMapper.findById(id);
+        if(product == null){
+            throw new ResourceNotFoundException("商品不存在：" + id);
+        }
+        return product;
     }
 
     @Override

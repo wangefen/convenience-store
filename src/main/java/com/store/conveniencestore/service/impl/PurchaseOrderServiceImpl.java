@@ -6,6 +6,8 @@ import com.store.conveniencestore.dto.PurchaseOrderResponse;
 import com.store.conveniencestore.entity.InventoryTransaction;
 import com.store.conveniencestore.entity.PurchaseItem;
 import com.store.conveniencestore.entity.PurchaseOrder;
+import com.store.conveniencestore.exception.BusinessConflictException;
+import com.store.conveniencestore.exception.ResourceNotFoundException;
 import com.store.conveniencestore.mapper.InventoryTransactionMapper;
 import com.store.conveniencestore.mapper.ProductMapper;
 import com.store.conveniencestore.mapper.PurchaseItemMapper;
@@ -170,13 +172,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                 purchaseOrderMapper.findById(id);
 
         if (purchaseOrder == null) {
-            throw new IllegalArgumentException(
+            throw new ResourceNotFoundException(
                     "采购订单不存在，订单编号：" + id
             );
         }
 
         if ("CANCELLED".equals(purchaseOrder.getStatus())) {
-            throw new IllegalArgumentException(
+            throw new BusinessConflictException(
                     "采购订单已经取消，不能重复取消"
             );
         }
@@ -191,7 +193,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                 purchaseOrderMapper.cancelIfCompleted(id);
 
         if (affectedRows == 0) {
-            throw new IllegalStateException(
+            throw new BusinessConflictException(
                     "采购订单状态已经发生变化，取消失败"
             );
         }
