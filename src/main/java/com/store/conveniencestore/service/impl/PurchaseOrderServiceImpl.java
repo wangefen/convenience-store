@@ -45,8 +45,24 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
     }
 
     @Override
-    public PurchaseOrder findById(Integer id){
-        return purchaseOrderMapper.findById(id);
+    public PurchaseOrder findById(Integer id) {
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "采购订单编号必须大于0"
+            );
+        }
+
+        PurchaseOrder purchaseOrder =
+                purchaseOrderMapper.findById(id);
+
+        if (purchaseOrder == null) {
+            throw new ResourceNotFoundException(
+                    "采购订单不存在，订单编号：" + id
+            );
+        }
+
+        return purchaseOrder;
     }
 
     @Transactional //@Transactional 用来保证一个业务方法中的多次数据库操作要么全部成功，要么发生异常时全部回滚。

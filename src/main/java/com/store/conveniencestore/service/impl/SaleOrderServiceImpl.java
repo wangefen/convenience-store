@@ -7,6 +7,8 @@ import com.store.conveniencestore.entity.InventoryTransaction;
 import com.store.conveniencestore.entity.Product;
 import com.store.conveniencestore.entity.SaleItem;
 import com.store.conveniencestore.entity.SaleOrder;
+import com.store.conveniencestore.exception.BusinessConflictException;
+import com.store.conveniencestore.exception.ResourceNotFoundException;
 import com.store.conveniencestore.mapper.InventoryTransactionMapper;
 import com.store.conveniencestore.mapper.ProductMapper;
 import com.store.conveniencestore.mapper.SaleItemMapper;
@@ -49,7 +51,18 @@ public class SaleOrderServiceImpl implements SaleOrderService {
 
     @Override
     public SaleOrder findById(Integer id) {
-        return saleOrderMapper.findById(id);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "销售订单编号必须大于0"
+            );
+        }
+        SaleOrder saleOrder =  saleOrderMapper.findById(id);
+        if (saleOrder == null){
+            throw new BusinessConflictException(
+                    "销售订单不存在，订单编号：" + id
+                    );
+        }
+        return saleOrder;
     }
 
     /**
@@ -238,13 +251,13 @@ public class SaleOrderServiceImpl implements SaleOrderService {
                 saleOrderMapper.findById(id);
 
         if (saleOrder == null) {
-            throw new IllegalArgumentException(
+            throw new ResourceNotFoundException(
                     "销售订单不存在，订单编号：" + id
             );
         }
 
         if ("CANCELLED".equals(saleOrder.getStatus())) {
-            throw new IllegalArgumentException(
+            throw new BusinessConflictException(
                     "销售订单已经取消，不能重复取消"
             );
         }
@@ -257,7 +270,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
                 saleOrderMapper.cancelIfCompleted(id);
 
         if (affectedRows == 0) {
-            throw new IllegalStateException(
+            throw new BusinessConflictException(
                     "销售订单状态已经发生变化，取消失败"
             );
         }
