@@ -8,6 +8,7 @@ import com.store.conveniencestore.mapper.SupplierMapper;
 import com.store.conveniencestore.service.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -50,6 +51,18 @@ public class ProductServiceImpl implements ProductService {
         if (product == null) {
             throw new IllegalArgumentException(
                     "商品数据不能为空"
+            );
+        }
+
+        if (product.getSalePrice() == null || product.getSalePrice().compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException(
+                    "销售价格必须大于0"
+            );
+        }
+
+        if (categoryMapper.findById(product.getId()) == null){
+            throw  new ResourceNotFoundException(
+                    "商品对应种类不存在"
             );
         }
 

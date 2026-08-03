@@ -147,14 +147,6 @@ public class SaleOrderServiceImpl implements SaleOrderService {
                 );
             }
 
-            if (product.getSalePrice() == null
-                    || product.getSalePrice().signum() <= 0) {
-
-                throw new IllegalArgumentException(
-                        "商品销售价格不正确，商品编号："
-                                + product.getId()
-                );
-            }
 
             /*
              * 原子扣减库存。
