@@ -1,6 +1,6 @@
 package com.store.conveniencestore.controller;
 
-
+import com.store.conveniencestore.common.ApiResponse;
 import com.store.conveniencestore.entity.Supplier;
 import com.store.conveniencestore.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,34 +11,58 @@ import java.util.List;
 @RestController
 @RequestMapping("/suppliers")
 public class SupplierController {
+
     @Autowired
     private SupplierService supplierService;
 
     @GetMapping
-    public List<Supplier> findAll(){
-        return supplierService.findAll();
+    public ApiResponse<List<Supplier>> findAll() {
+
+        List<Supplier> suppliers =
+                supplierService.findAll();
+
+        return ApiResponse.success(suppliers);
     }
 
     @GetMapping("/{id}")
-    public Supplier findById (@PathVariable Integer id){
-        return supplierService.findById(id);
+    public ApiResponse<Supplier> findById(
+            @PathVariable Integer id) {
+
+        Supplier supplier =
+                supplierService.findById(id);
+
+        return ApiResponse.success(supplier);
     }
 
     @PostMapping
-    public Supplier insert(@RequestBody Supplier supplier){
+    public ApiResponse<Supplier> insert(
+            @RequestBody Supplier supplier) {
+
         supplierService.insert(supplier);
-        return supplier;
+
+        return ApiResponse.success(supplier);
     }
 
     @PutMapping("/{id}")
-    public Supplier update(@PathVariable Integer id, @RequestBody Supplier supplier){
+    public ApiResponse<Supplier> update(
+            @PathVariable Integer id,
+            @RequestBody Supplier supplier) {
+
         supplier.setId(id);
         supplierService.update(supplier);
-        return supplierService.findById(id);
+
+        Supplier updatedSupplier =
+                supplierService.findById(id);
+
+        return ApiResponse.success(updatedSupplier);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id){
+    public ApiResponse<Void> delete(
+            @PathVariable Integer id) {
+
         supplierService.delete(id);
+
+        return ApiResponse.success(null);
     }
 }

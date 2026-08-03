@@ -1,5 +1,6 @@
 package com.store.conveniencestore.controller;
 
+import com.store.conveniencestore.common.ApiResponse;
 import com.store.conveniencestore.entity.InventoryTransaction;
 import com.store.conveniencestore.service.InventoryTransactionService;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,13 @@ public class InventoryTransactionController {
      * GET /inventory-transactions
      */
     @GetMapping
-    public List<InventoryTransaction> findAll() {
-        return inventoryTransactionService.findAll();
+    public ApiResponse<List<InventoryTransaction>>
+    findAll() {
+
+        List<InventoryTransaction> transactions =
+                inventoryTransactionService.findAll();
+
+        return ApiResponse.success(transactions);
     }
 
     /**
@@ -40,10 +46,14 @@ public class InventoryTransactionController {
      * GET /inventory-transactions/product/1
      */
     @GetMapping("/product/{productId}")
-    public List<InventoryTransaction> findByProductId(
+    public ApiResponse<List<InventoryTransaction>>
+    findByProductId(
             @PathVariable Integer productId) {
 
-        return inventoryTransactionService
-                .findByProductId(productId);
+        List<InventoryTransaction> transactions =
+                inventoryTransactionService
+                        .findByProductId(productId);
+
+        return ApiResponse.success(transactions);
     }
 }

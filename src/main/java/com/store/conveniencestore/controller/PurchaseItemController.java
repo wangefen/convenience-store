@@ -1,64 +1,52 @@
 package com.store.conveniencestore.controller;
 
+import com.store.conveniencestore.common.ApiResponse;
 import com.store.conveniencestore.entity.PurchaseItem;
 import com.store.conveniencestore.service.PurchaseItemService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * 采购明细控制层。
- *
- * 负责接收前端发送的采购明细相关 HTTP 请求，
- * 再调用 PurchaseItemService 完成相应操作。
- */
 @RestController
 @RequestMapping("/purchase-items")
 public class PurchaseItemController {
 
     private final PurchaseItemService purchaseItemService;
 
-    /**
-     * 构造器注入。
-     *
-     * Spring 会自动注入 PurchaseItemServiceImpl 对象。
-     */
     public PurchaseItemController(
             PurchaseItemService purchaseItemService) {
+
         this.purchaseItemService = purchaseItemService;
     }
 
-    /**
-     * 查询全部采购明细。
-     *
-     * GET http://localhost:8080/purchase-items
-     */
     @GetMapping
-    public List<PurchaseItem> findAll() {
-        return purchaseItemService.findAll();
+    public ApiResponse<List<PurchaseItem>> findAll() {
+
+        List<PurchaseItem> purchaseItems =
+                purchaseItemService.findAll();
+
+        return ApiResponse.success(purchaseItems);
     }
 
-    /**
-     * 根据采购明细 id 查询。
-     *
-     * GET http://localhost:8080/purchase-items/1
-     */
     @GetMapping("/{id}")
-    public PurchaseItem findById(@PathVariable Integer id) {
-        return purchaseItemService.findById(id);
+    public ApiResponse<PurchaseItem> findById(
+            @PathVariable Integer id) {
+
+        PurchaseItem purchaseItem =
+                purchaseItemService.findById(id);
+
+        return ApiResponse.success(purchaseItem);
     }
 
-    /**
-     * 根据采购订单 id 查询该订单的全部明细。
-     *
-     * GET http://localhost:8080/purchase-items/order/1
-     */
     @GetMapping("/order/{purchaseOrderId}")
-    public List<PurchaseItem> findByPurchaseOrderId(
+    public ApiResponse<List<PurchaseItem>>
+    findByPurchaseOrderId(
             @PathVariable Integer purchaseOrderId) {
 
-        return purchaseItemService
-                .findByPurchaseOrderId(purchaseOrderId);
-    }
+        List<PurchaseItem> purchaseItems =
+                purchaseItemService
+                        .findByPurchaseOrderId(purchaseOrderId);
 
+        return ApiResponse.success(purchaseItems);
+    }
 }
