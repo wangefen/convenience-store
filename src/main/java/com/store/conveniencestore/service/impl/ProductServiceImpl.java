@@ -70,8 +70,8 @@ public class ProductServiceImpl implements ProductService {
                     "商品标编号必须大于0"
             );
         }
-        int afteredRows = productMapper.delete(id);
-        if (afteredRows == 0){
+        int affectedRows = productMapper.delete(id);
+        if (affectedRows == 0){
             throw new ResourceNotFoundException(
                     "商品不存在"
             );
@@ -97,8 +97,8 @@ public class ProductServiceImpl implements ProductService {
         checkCategory(product.getCategoryId());
         checkSalePrice(product.getSalePrice());
 
-        int afteredRows = productMapper.update(product);
-        if (afteredRows == 0){
+        int affectedRows = productMapper.update(product);
+        if (affectedRows == 0){
             throw new ResourceNotFoundException(
                     "商品不存在：" + product.getId()
             );

@@ -1,5 +1,6 @@
 package com.store.conveniencestore.controller;
 
+import com.store.conveniencestore.common.ApiResponse;
 import com.store.conveniencestore.entity.Product;
 import com.store.conveniencestore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,32 +16,37 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<Product> findAll(){
-        return productService.findAll();
+    public ApiResponse<List<Product>> findAll(){
+        List<Product> products = productService.findAll();
+        return ApiResponse.success(products);
     }
 
     @GetMapping("/{id}")
-    public Product findById(@PathVariable Integer id) {
-        return productService.findById(id);
+    public ApiResponse<Product> findById(@PathVariable Integer id) {
+        Product product = productService.findById(id);
+        return ApiResponse.success(product);
     }
 
     @PostMapping
-    public Product insert(@RequestBody Product product) {
+    public ApiResponse<Product> insert(@RequestBody Product product) {
         productService.insert(product);
 
-        return product;
+        return ApiResponse.success(product);
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable Integer id, @RequestBody Product product){
+    public ApiResponse<Product> update(@PathVariable Integer id, @RequestBody Product product){
         product.setId(id);
         productService.update(product);
-        return productService.findById(id);
+        Product updatedProduct = productService.findById(id);
+
+        return ApiResponse.success(updatedProduct);
     }
 
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ApiResponse<Void> delete(@PathVariable Integer id) {
         productService.delete(id);
+        return ApiResponse.success(null);
     }
 }
