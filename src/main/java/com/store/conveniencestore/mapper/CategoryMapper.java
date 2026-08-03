@@ -18,6 +18,11 @@ public interface CategoryMapper {
     Category findById(Integer id);
 
     @Insert("INSERT INTO category(name) VALUES(#{name})")
+    @Options(
+            useGeneratedKeys = true,
+            keyProperty = "id",
+            keyColumn = "id"
+    )
     void insert(Category category);
 
     //Mybatis执行SQL时，会返回成功影响的行数，这里用int接收
