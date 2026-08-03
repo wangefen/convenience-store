@@ -1,6 +1,7 @@
 package com.store.conveniencestore.service.impl;
 
 import com.store.conveniencestore.entity.Category;
+import com.store.conveniencestore.exception.ResourceNotFoundException;
 import com.store.conveniencestore.mapper.CategoryMapper;
 import com.store.conveniencestore.service.CategoryService;
 import org.springframework.stereotype.Service;
@@ -25,17 +26,58 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void insert(Category category){
+    public void insert(Category category) {
+
+        if (category == null) {
+            throw new IllegalArgumentException(
+                    "分类数据不能为空"
+            );
+        }
+
         categoryMapper.insert(category);
     }
 
     @Override
-    public void update(Category category){
-        categoryMapper.update(category);
+    public void update(Category category) {
+
+        if (category == null) {
+            throw new IllegalArgumentException(
+                    "分类数据不能为空"
+            );
+        }
+
+        if (category.getId() == null
+                || category.getId() <= 0) {
+
+            throw new IllegalArgumentException(
+                    "分类编号必须大于0"
+            );
+        }
+
+        int affectedRows = categoryMapper.update(category);
+
+        if (affectedRows == 0) {
+            throw new ResourceNotFoundException(
+                    "分类不存在，分类编号：" + category.getId()
+            );
+        }
     }
 
     @Override
-    public  void delete(Integer id){
-        categoryMapper.delete(id);
+    public void delete(Integer id) {
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "分类编号必须大于0"
+            );
+        }
+
+        int affectedRows = categoryMapper.delete(id);
+
+        if (affectedRows == 0) {
+            throw new ResourceNotFoundException(
+                    "分类不存在，分类编号：" + id
+            );
+        }
     }
 }

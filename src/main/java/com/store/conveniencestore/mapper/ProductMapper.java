@@ -18,7 +18,7 @@ public interface ProductMapper {
     void insert(Product product);
 
     @Update("UPDATE  product SET name = #{name}, category_id = #{categoryId}, sale_price = #{salePrice} WHERE id = #{id}")
-    void update(Product product);
+    int update(Product product);
 
     @Update("UPDATE product SET stock = stock + #{quantity} WHERE id = #{productId}")
     int increaseStock(
@@ -50,4 +50,4 @@ public interface ProductMapper {
     );
 
     @Delete("DELETE FROM product WHERE id = #{id}")
-    void delete(Integer id);}
+    int delete(Integer id);}

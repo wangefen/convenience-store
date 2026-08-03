@@ -3,10 +3,14 @@ package com.store.conveniencestore.exception;
 import com.store.conveniencestore.common.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 /**
@@ -78,6 +82,58 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(
                         HttpStatus.BAD_REQUEST.value(),
                         exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(
+            MethodArgumentTypeMismatchException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "参数格式错误：" + exception.getName()
+                ));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnreadableBody(
+            HttpMessageNotReadableException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "请求体格式错误"
+                ));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleDataIntegrityViolation(
+            DataIntegrityViolationException exception) {
+
+        log.warn("发生数据库约束冲突", exception);
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(
+                        HttpStatus.CONFLICT.value(),
+                        "数据存在关联关系或重复，当前操作无法完成"
+                ));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(ApiResponse.error(
+                        HttpStatus.METHOD_NOT_ALLOWED.value(),
+                        "当前接口不支持该请求方式"
                 ));
     }
 

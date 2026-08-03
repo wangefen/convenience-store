@@ -18,9 +18,9 @@ public interface SupplierMapper {
     void insert(Supplier supplier);
 
     @Update("UPDATE supplier SET name = #{name}, contact = #{contact}, phone = #{phone}, address = #{address} WHERE id = #{id}")
-    void update(Supplier supplier);
+    int update(Supplier supplier);
 
     @Delete("DELETE FROM supplier WHERE id = #{id}")
-    void delete(Integer id);
+    int delete(Integer id);
 
 }

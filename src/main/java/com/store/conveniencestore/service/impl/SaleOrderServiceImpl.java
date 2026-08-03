@@ -58,7 +58,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
         }
         SaleOrder saleOrder =  saleOrderMapper.findById(id);
         if (saleOrder == null){
-            throw new BusinessConflictException(
+            throw new ResourceNotFoundException(
                     "销售订单不存在，订单编号：" + id
                     );
         }
@@ -117,9 +117,11 @@ public class SaleOrderServiceImpl implements SaleOrderService {
                 );
             }
 
-            if (itemRequest.productId() == null) {
+            if (itemRequest.productId() == null
+                    || itemRequest.productId() <= 0) {
+
                 throw new IllegalArgumentException(
-                        "商品编号不能为空"
+                        "商品编号必须大于0"
                 );
             }
 
@@ -139,7 +141,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
             );
 
             if (product == null) {
-                throw new IllegalArgumentException(
+                throw new ResourceNotFoundException(
                         "商品不存在，商品编号："
                                 + itemRequest.productId()
                 );
@@ -170,7 +172,7 @@ public class SaleOrderServiceImpl implements SaleOrderService {
              * 所以这里返回0，通常表示库存不足。
              */
             if (affectedRows == 0) {
-                throw new IllegalArgumentException(
+                throw new BusinessConflictException(
                         "商品库存不足，商品编号："
                                 + product.getId()
                 );

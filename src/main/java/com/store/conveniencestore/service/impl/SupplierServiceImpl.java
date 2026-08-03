@@ -41,18 +41,60 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public void insert(Supplier supplier){
+    public void insert(Supplier supplier) {
+
+        if (supplier == null) {
+            throw new IllegalArgumentException(
+                    "供应商数据不能为空"
+            );
+        }
+
         supplierMapper.insert(supplier);
     }
 
     @Override
-    public void update(Supplier supplier){
-        supplierMapper.update(supplier);
+    public void update(Supplier supplier) {
+
+        if (supplier == null) {
+            throw new IllegalArgumentException(
+                    "供应商数据不能为空"
+            );
+        }
+
+        if (supplier.getId() == null
+                || supplier.getId() <= 0) {
+
+            throw new IllegalArgumentException(
+                    "供应商编号必须大于0"
+            );
+        }
+
+        int affectedRows = supplierMapper.update(supplier);
+
+        if (affectedRows == 0) {
+            throw new ResourceNotFoundException(
+                    "供应商不存在，供应商编号："
+                            + supplier.getId()
+            );
+        }
     }
 
     @Override
     public void delete(Integer id) {
-        supplierMapper.delete(id);
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "供应商编号必须大于0"
+            );
+        }
+
+        int affectedRows = supplierMapper.delete(id);
+
+        if (affectedRows == 0) {
+            throw new ResourceNotFoundException(
+                    "供应商不存在，供应商编号：" + id
+            );
+        }
     }
 
 

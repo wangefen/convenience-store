@@ -8,10 +8,7 @@ import com.store.conveniencestore.entity.PurchaseItem;
 import com.store.conveniencestore.entity.PurchaseOrder;
 import com.store.conveniencestore.exception.BusinessConflictException;
 import com.store.conveniencestore.exception.ResourceNotFoundException;
-import com.store.conveniencestore.mapper.InventoryTransactionMapper;
-import com.store.conveniencestore.mapper.ProductMapper;
-import com.store.conveniencestore.mapper.PurchaseItemMapper;
-import com.store.conveniencestore.mapper.PurchaseOrderMapper;
+import com.store.conveniencestore.mapper.*;
 import com.store.conveniencestore.service.PurchaseOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,16 +23,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
     private final PurchaseItemMapper purchaseItemMapper;
     private final ProductMapper productMapper;
     private final InventoryTransactionMapper inventoryTransactionMapper;
+    private final SupplierMapper supplierMapper;
 
     //因为这里用到了mapper,是spring提供的管理组件，所以要依赖注入，自己写的类就不用直接new就行
     public PurchaseOrderServiceImpl(PurchaseOrderMapper purchaseOrderMapper,
                                     PurchaseItemMapper purchaseItemMapper,
                                     ProductMapper productMapper,
-                                    InventoryTransactionMapper inventoryTransactionMapper){
+                                    InventoryTransactionMapper inventoryTransactionMapper, SupplierMapper supplierMapper){
         this.purchaseOrderMapper = purchaseOrderMapper;
         this.purchaseItemMapper = purchaseItemMapper;
         this.productMapper = productMapper;
         this.inventoryTransactionMapper = inventoryTransactionMapper;
+        this.supplierMapper = supplierMapper;
     }
 
 
@@ -72,9 +71,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
             throw new IllegalArgumentException("采购订单数据不能为空");
         }
 
-        if (request.supplierId() == null) {
-            throw new IllegalArgumentException("供应商编号不能为空");
+        if (request.supplierId() == null || request.supplierId() <= 0) {
+            throw new IllegalArgumentException("供应商编号必须大于0");
         }
+
+        if (supplierMapper.findById(request.supplierId()) == null) {
+
+            throw new ResourceNotFoundException(
+                    "供应商不存在，供应商编号："
+                            + request.supplierId()
+            );
+        }
+
         if (request.items() == null
                 || request.items().isEmpty()) {
             throw new IllegalArgumentException(
@@ -97,11 +105,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                         "采购明细不能为空"
                 );
             }
-            if (itemRequest.productId() == null){
+            if (itemRequest.productId() == null || itemRequest.productId() <= 0){
                 throw new IllegalArgumentException(
                         "商品编号不能为空"
                 );
             }
+
+            if (productMapper.findById(
+                    itemRequest.productId()) == null) {
+
+                throw new ResourceNotFoundException(
+                        "商品不存在，商品编号："
+                                + itemRequest.productId()
+                );
+            }
+
             if (itemRequest.quantity() == null || itemRequest.quantity() <= 0){
                 throw new IllegalArgumentException(
                         "采购量必须大于0"
@@ -128,8 +146,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
             );
 
             if (affectedRows == 0){
-                throw new IllegalArgumentException(
-                        "商品编号不存在，商品编号："+itemRequest.productId()
+                throw new BusinessConflictException(
+                        "商品状态已经发生变化，采购入库失败，商品编号："+itemRequest.productId()
                 );
             }
 
