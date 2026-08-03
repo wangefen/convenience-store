@@ -54,19 +54,10 @@ public class ProductServiceImpl implements ProductService {
             );
         }
 
-        if (product.getSalePrice() == null || product.getSalePrice().compareTo(BigDecimal.ZERO) <= 0){
-            throw new IllegalArgumentException(
-                    "销售价格必须大于0"
-            );
-        }
-
-        if (categoryMapper.findById(product.getId()) == null){
-            throw  new ResourceNotFoundException(
-                    "商品对应种类不存在"
-            );
-        }
-
         checkCategory(product.getCategoryId());
+
+        checkSalePrice(product.getSalePrice());
+
 
         product.setStock(0);
         productMapper.insert(product);
@@ -104,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         checkCategory(product.getCategoryId());
+        checkSalePrice(product.getSalePrice());
 
         int afteredRows = productMapper.update(product);
         if (afteredRows == 0){
@@ -123,6 +115,14 @@ public class ProductServiceImpl implements ProductService {
         if (categoryMapper.findById(categoryId) == null){
             throw new ResourceNotFoundException(
                     "分类不存在，请先核对好后在操作"
+            );
+        }
+    }
+
+    private void checkSalePrice(BigDecimal salePrice) {
+        if (salePrice == null || salePrice.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException(
+                    "商品售价必须大于0"
             );
         }
     }
