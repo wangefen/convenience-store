@@ -5,7 +5,7 @@ import com.store.conveniencestore.dto.SupplierRequest;
 import com.store.conveniencestore.entity.Supplier;
 import com.store.conveniencestore.service.SupplierService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,8 +14,11 @@ import java.util.List;
 @RequestMapping("/suppliers")
 public class SupplierController {
 
-    @Autowired
-    private SupplierService supplierService;
+    private final SupplierService supplierService;
+
+    public SupplierController(SupplierService supplierService) {
+        this.supplierService = supplierService;
+    }
 
     @GetMapping
     public ApiResponse<List<Supplier>> findAll() {
@@ -28,7 +31,7 @@ public class SupplierController {
 
     @GetMapping("/{id}")
     public ApiResponse<Supplier> findById(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "供应商编号必须大于0") Integer id) {
 
         Supplier supplier =
                 supplierService.findById(id);
@@ -55,7 +58,7 @@ public class SupplierController {
 
     @PutMapping("/{id}")
     public ApiResponse<Supplier> update(
-            @PathVariable Integer id,
+            @PathVariable @Positive(message = "供应商编号必须大于0") Integer id,
             @Valid @RequestBody SupplierRequest request) {
 
         Supplier supplier = new Supplier();
@@ -76,7 +79,7 @@ public class SupplierController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "供应商编号必须大于0") Integer id) {
 
         supplierService.delete(id);
 

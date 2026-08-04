@@ -6,6 +6,7 @@ import com.store.conveniencestore.dto.SaleOrderResponse;
 import com.store.conveniencestore.entity.SaleOrder;
 import com.store.conveniencestore.service.SaleOrderService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class SaleOrderController {
      */
     @PostMapping("/{id}/cancel")
     public ApiResponse<SaleOrder> cancel(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "销售订单编号必须大于0") Integer id) {
 
         SaleOrder cancelledOrder =
                 saleOrderService.cancel(id);

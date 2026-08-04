@@ -11,6 +11,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
@@ -163,6 +164,30 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+
+
+    /**
+     * 处理路径参数、查询参数等方法参数校验失败。
+     */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleHandlerMethodValidation(
+            HandlerMethodValidationException exception) {
+
+        String message = exception
+                .getAllErrors()
+                .stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("请求参数校验失败");
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        HttpStatus.BAD_REQUEST.value(),
+                        message
+                ));
+    }
 
     /**
      * 处理其他未预料的异常，返回 HTTP 500。

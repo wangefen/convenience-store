@@ -3,6 +3,7 @@ package com.store.conveniencestore.controller;
 import com.store.conveniencestore.common.ApiResponse;
 import com.store.conveniencestore.entity.PurchaseItem;
 import com.store.conveniencestore.service.PurchaseItemService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class PurchaseItemController {
 
     @GetMapping("/{id}")
     public ApiResponse<PurchaseItem> findById(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "采购明细编号必须大于0") Integer id) {
 
         PurchaseItem purchaseItem =
                 purchaseItemService.findById(id);
@@ -41,7 +42,7 @@ public class PurchaseItemController {
     @GetMapping("/order/{purchaseOrderId}")
     public ApiResponse<List<PurchaseItem>>
     findByPurchaseOrderId(
-            @PathVariable Integer purchaseOrderId) {
+            @PathVariable @Positive(message = "采购订单编号必须大于0") Integer purchaseOrderId) {
 
         List<PurchaseItem> purchaseItems =
                 purchaseItemService

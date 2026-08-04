@@ -5,6 +5,7 @@ import com.store.conveniencestore.dto.ProductCreateRequest;
 import com.store.conveniencestore.entity.Product;
 import com.store.conveniencestore.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Product> findById(@PathVariable Integer id) {
+    public ApiResponse<Product> findById(@PathVariable @Positive(message = "商品编号必须大于0")Integer id) {
         Product product = productService.findById(id);
         return ApiResponse.success(product);
     }
@@ -42,7 +43,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Product> update(@PathVariable Integer id, @Valid @RequestBody ProductCreateRequest request){
+    public ApiResponse<Product> update(@PathVariable @Positive(message = "商品编号必须大于0") Integer id, @Valid @RequestBody ProductCreateRequest request){
         Product product = new Product();
         product.setId(id);
         product.setName(request.name());
@@ -56,7 +57,7 @@ public class ProductController {
 
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Integer id) {
+    public ApiResponse<Void> delete(@PathVariable @Positive(message = "商品编号必须大于0") Integer id) {
         productService.delete(id);
         return ApiResponse.success(null);
     }

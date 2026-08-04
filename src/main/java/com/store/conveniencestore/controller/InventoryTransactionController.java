@@ -3,6 +3,7 @@ package com.store.conveniencestore.controller;
 import com.store.conveniencestore.common.ApiResponse;
 import com.store.conveniencestore.entity.InventoryTransaction;
 import com.store.conveniencestore.service.InventoryTransactionService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class InventoryTransactionController {
     @GetMapping("/product/{productId}")
     public ApiResponse<List<InventoryTransaction>>
     findByProductId(
-            @PathVariable Integer productId) {
+            @PathVariable @Positive(message = "商品编号必须大于0") Integer productId) {
 
         List<InventoryTransaction> transactions =
                 inventoryTransactionService

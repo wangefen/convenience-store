@@ -5,6 +5,7 @@ import com.store.conveniencestore.dto.CategoryRequest;
 import com.store.conveniencestore.entity.Category;
 import com.store.conveniencestore.service.CategoryService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class CategoryController {
 
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService){
         this.categoryService = categoryService;
@@ -44,7 +45,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ApiResponse<Category> update(
-            @PathVariable Integer id,
+            @PathVariable @Positive(message = "分类编号必须大于0") Integer id,
             @Valid @RequestBody CategoryRequest request) {
 
         Category category = new Category();
@@ -59,7 +60,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "分类编号必须大于0") Integer id) {
 
         categoryService.delete(id);
 

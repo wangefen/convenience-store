@@ -6,6 +6,7 @@ import com.store.conveniencestore.dto.PurchaseOrderResponse;
 import com.store.conveniencestore.entity.PurchaseOrder;
 import com.store.conveniencestore.service.PurchaseOrderService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class PurchaseOrderController {
 
     @GetMapping("/{id}")
     public ApiResponse<PurchaseOrder> findById(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "采购订单编号必须大于0") Integer id) {
 
         PurchaseOrder purchaseOrder =
                 purchaseOrderService.findById(id);
@@ -53,7 +54,7 @@ public class PurchaseOrderController {
 
     @PostMapping("/{id}/cancel")
     public ApiResponse<PurchaseOrder> cancel(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "采购订单编号必须大于0") Integer id) {
 
         PurchaseOrder cancelledOrder =
                 purchaseOrderService.cancel(id);
