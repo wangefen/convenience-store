@@ -1,8 +1,10 @@
 package com.store.conveniencestore.controller;
 
 import com.store.conveniencestore.common.ApiResponse;
+import com.store.conveniencestore.dto.SupplierRequest;
 import com.store.conveniencestore.entity.Supplier;
 import com.store.conveniencestore.service.SupplierService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,19 +38,34 @@ public class SupplierController {
 
     @PostMapping
     public ApiResponse<Supplier> insert(
-            @RequestBody Supplier supplier) {
+            @Valid @RequestBody SupplierRequest request) {
+
+        Supplier supplier = new Supplier();
+
+        supplier.setName(request.name());
+        supplier.setContact(request.contact());
+        supplier.setPhone(request.phone());
+        supplier.setAddress(request.address());
 
         supplierService.insert(supplier);
 
         return ApiResponse.success(supplier);
     }
 
+
     @PutMapping("/{id}")
     public ApiResponse<Supplier> update(
             @PathVariable Integer id,
-            @RequestBody Supplier supplier) {
+            @Valid @RequestBody SupplierRequest request) {
+
+        Supplier supplier = new Supplier();
 
         supplier.setId(id);
+        supplier.setName(request.name());
+        supplier.setContact(request.contact());
+        supplier.setPhone(request.phone());
+        supplier.setAddress(request.address());
+
         supplierService.update(supplier);
 
         Supplier updatedSupplier =
