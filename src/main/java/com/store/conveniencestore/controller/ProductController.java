@@ -1,8 +1,10 @@
 package com.store.conveniencestore.controller;
 
 import com.store.conveniencestore.common.ApiResponse;
+import com.store.conveniencestore.dto.ProductCreateRequest;
 import com.store.conveniencestore.entity.Product;
 import com.store.conveniencestore.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,15 +30,23 @@ public class ProductController {
     }
 
     @PostMapping
-    public ApiResponse<Product> insert(@RequestBody Product product) {
-        productService.insert(product);
+    public ApiResponse<Product> insert(@Valid @RequestBody ProductCreateRequest request) {
+       Product product = new Product();
+       product.setName(request.name());
+       product.setCategoryId(request.categoryId());
+       product.setSalePrice(request.salePrice());
+
+       productService.insert(product);
 
         return ApiResponse.success(product);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Product> update(@PathVariable Integer id, @RequestBody Product product){
-        product.setId(id);
+    public ApiResponse<Product> update(@PathVariable Integer id, @Valid @RequestBody ProductCreateRequest request){
+        Product product = new Product();
+        product.setId(request.categoryId());
+        product.setName(request.name());
+        product.setSalePrice(request.salePrice());
         productService.update(product);
         Product updatedProduct = productService.findById(id);
 

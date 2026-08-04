@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -136,6 +137,32 @@ public class GlobalExceptionHandler {
                         "当前接口不支持该请求方式"
                 ));
     }
+
+
+    /**
+     * 处理 @Valid 请求参数校验失败。
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleMethodArgumentNotValid(
+            MethodArgumentNotValidException exception) {
+
+        String message = exception
+                .getBindingResult()
+                .getAllErrors()
+                .stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("请求参数校验失败");
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        HttpStatus.BAD_REQUEST.value(),
+                        message
+                ));
+    }
+
 
     /**
      * 处理其他未预料的异常，返回 HTTP 500。
