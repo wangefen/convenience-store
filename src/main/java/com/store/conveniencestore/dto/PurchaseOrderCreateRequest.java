@@ -1,5 +1,10 @@
 package com.store.conveniencestore.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.util.List;
 
 /**
@@ -10,7 +15,14 @@ import java.util.List;
  * 2. 多条采购明细
  */
 public record PurchaseOrderCreateRequest(
+        @NotNull(message = "供应商编号不能为空")
+        @Positive(message = "供应商编号必须大于0")
         Integer supplierId,
-        List<PurchaseItemCreateRequest> items
+
+
+        /*@Valid 会让校验继续进入每个 PurchaseItemCreateRequest，
+        检查其中的：productId,quantity,purchasePrice*/
+        @NotEmpty(message = "采购订单至少包含一条明细")
+        List<@NotNull(message = "采购明细不能为空") @Valid PurchaseItemCreateRequest> items
 ) {
 }

@@ -5,6 +5,7 @@ import com.store.conveniencestore.dto.PurchaseOrderCreateRequest;
 import com.store.conveniencestore.dto.PurchaseOrderResponse;
 import com.store.conveniencestore.entity.PurchaseOrder;
 import com.store.conveniencestore.service.PurchaseOrderService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class PurchaseOrderController {
 
     @PostMapping
     public ApiResponse<PurchaseOrderResponse> createOrder(
-            @RequestBody PurchaseOrderCreateRequest request) {
+            @Valid @RequestBody PurchaseOrderCreateRequest request) {
 
         PurchaseOrderResponse response =
                 purchaseOrderService.createOrder(request);

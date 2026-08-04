@@ -56,7 +56,6 @@ public class ProductServiceImpl implements ProductService {
 
         checkCategory(product.getCategoryId());
 
-        checkSalePrice(product.getSalePrice());
 
 
         product.setStock(0);
@@ -95,7 +94,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
         checkCategory(product.getCategoryId());
-        checkSalePrice(product.getSalePrice());
 
         int affectedRows = productMapper.update(product);
         if (affectedRows == 0){
@@ -115,14 +113,6 @@ public class ProductServiceImpl implements ProductService {
         if (categoryMapper.findById(categoryId) == null){
             throw new ResourceNotFoundException(
                     "分类不存在，请先核对好后在操作"
-            );
-        }
-    }
-
-    private void checkSalePrice(BigDecimal salePrice) {
-        if (salePrice == null || salePrice.compareTo(BigDecimal.ZERO) <= 0){
-            throw new IllegalArgumentException(
-                    "商品售价必须大于0"
             );
         }
     }

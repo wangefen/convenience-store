@@ -71,9 +71,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
             throw new IllegalArgumentException("采购订单数据不能为空");
         }
 
-        if (request.supplierId() == null || request.supplierId() <= 0) {
-            throw new IllegalArgumentException("供应商编号必须大于0");
-        }
+        /*
+         * DTO已经检查supplierId非空且大于0。
+         * Service负责检查供应商在数据库中是否真实存在。
+         */
 
         if (supplierMapper.findById(request.supplierId()) == null) {
 
@@ -83,12 +84,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
             );
         }
 
-        if (request.items() == null
-                || request.items().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "采购订单至少包含一条明细"
-            );
-        }
+
 
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setSupplierId(request.supplierId());
@@ -100,16 +96,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
         List<PurchaseItem> savedItems = new ArrayList<>();
 
         for (PurchaseItemCreateRequest itemRequest : request.items()){
-            if (itemRequest == null){
-                throw new IllegalArgumentException(
-                        "采购明细不能为空"
-                );
-            }
-            if (itemRequest.productId() == null || itemRequest.productId() <= 0){
-                throw new IllegalArgumentException(
-                        "商品编号不能为空"
-                );
-            }
+            /*
+             * DTO已经检查：
+             * 1. 明细不能为null
+             * 2. productId必须大于0
+             * 3. quantity必须大于0
+             * 4. purchasePrice必须大于0
+             *
+             * Service只检查商品是否真实存在。
+             */
 
             if (productMapper.findById(
                     itemRequest.productId()) == null) {
@@ -117,18 +112,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService{
                 throw new ResourceNotFoundException(
                         "商品不存在，商品编号："
                                 + itemRequest.productId()
-                );
-            }
-
-            if (itemRequest.quantity() == null || itemRequest.quantity() <= 0){
-                throw new IllegalArgumentException(
-                        "采购量必须大于0"
-                );
-            }
-            if (itemRequest.purchasePrice() == null || itemRequest.purchasePrice().signum() <= 0){
-
-                throw new IllegalArgumentException(
-                        "采购价格必须大于0"
                 );
             }
 
