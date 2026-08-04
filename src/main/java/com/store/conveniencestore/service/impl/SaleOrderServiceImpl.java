@@ -82,13 +82,12 @@ public class SaleOrderServiceImpl implements SaleOrderService {
             );
         }
 
-        if (request.items() == null
-                || request.items().isEmpty()) {
 
-            throw new IllegalArgumentException(
-                    "销售订单至少包含一条明细"
-            );
-        }
+        /*
+         * items是否为空、每条明细是否合法，
+         * 已经由DTO中的校验注解负责。
+         */
+
 
         /*
          * 第二步：创建销售订单。
@@ -110,28 +109,15 @@ public class SaleOrderServiceImpl implements SaleOrderService {
          */
         for (SaleItemCreateRequest itemRequest
                 : request.items()) {
+            /*
+             * DTO已经检查：
+             * 1. 明细不能为null
+             * 2. productId必须大于0
+             * 3. quantity必须大于0
+             *
+             * Service负责检查商品是否真实存在。
+             */
 
-            if (itemRequest == null) {
-                throw new IllegalArgumentException(
-                        "销售明细不能为空"
-                );
-            }
-
-            if (itemRequest.productId() == null
-                    || itemRequest.productId() <= 0) {
-
-                throw new IllegalArgumentException(
-                        "商品编号必须大于0"
-                );
-            }
-
-            if (itemRequest.quantity() == null
-                    || itemRequest.quantity() <= 0) {
-
-                throw new IllegalArgumentException(
-                        "销售数量必须大于0"
-                );
-            }
 
             /*
              * 根据前端传入的商品编号查询商品。

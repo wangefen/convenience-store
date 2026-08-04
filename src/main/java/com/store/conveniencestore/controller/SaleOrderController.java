@@ -5,6 +5,7 @@ import com.store.conveniencestore.dto.SaleOrderCreateRequest;
 import com.store.conveniencestore.dto.SaleOrderResponse;
 import com.store.conveniencestore.entity.SaleOrder;
 import com.store.conveniencestore.service.SaleOrderService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class SaleOrderController {
      */
     @PostMapping
     public ApiResponse<SaleOrderResponse> createOrder(
-            @RequestBody SaleOrderCreateRequest request) {
+            @Valid @RequestBody SaleOrderCreateRequest request) {
 
         SaleOrderResponse response =
                 saleOrderService.createOrder(request);
