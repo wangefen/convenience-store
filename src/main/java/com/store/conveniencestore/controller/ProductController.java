@@ -44,8 +44,9 @@ public class ProductController {
     @PutMapping("/{id}")
     public ApiResponse<Product> update(@PathVariable Integer id, @Valid @RequestBody ProductCreateRequest request){
         Product product = new Product();
-        product.setId(request.categoryId());
+        product.setId(id);
         product.setName(request.name());
+        product.setCategoryId(request.categoryId());
         product.setSalePrice(request.salePrice());
         productService.update(product);
         Product updatedProduct = productService.findById(id);
