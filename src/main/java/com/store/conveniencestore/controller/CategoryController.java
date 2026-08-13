@@ -6,7 +6,6 @@ import com.store.conveniencestore.entity.Category;
 import com.store.conveniencestore.service.CategoryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

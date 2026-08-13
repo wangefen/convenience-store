@@ -40,7 +40,7 @@ public class SaleOrderController {
      */
     @GetMapping("/{id}")
     public ApiResponse<SaleOrder> findById(
-            @PathVariable Integer id) {
+            @PathVariable @Positive(message = "销售订单编号必须大于0") Integer id) {
 
         SaleOrder saleOrder =
                 saleOrderService.findById(id);
