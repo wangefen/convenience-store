@@ -1,5 +1,6 @@
 package com.store.conveniencestore.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,10 @@ import java.util.List;
  * 2. 多条采购明细
  */
 public record PurchaseOrderCreateRequest(
+        @Schema(
+                description = "供应商编号",
+                example = "1"
+        )
         @NotNull(message = "供应商编号不能为空")
         @Positive(message = "供应商编号必须大于0")
         Integer supplierId,
@@ -22,6 +27,10 @@ public record PurchaseOrderCreateRequest(
 
         /*@Valid 会让校验继续进入每个 PurchaseItemCreateRequest，
         检查其中的：productId,quantity,purchasePrice*/
+        @Schema(
+                description = "采购订单包含的采购明细列表",
+                example = "[{\"productId\": 1, \"quantity\": 10, \"purchasePrice\": 2.50}]"
+        )
         @NotEmpty(message = "采购订单至少包含一条明细")
         List<@NotNull(message = "采购明细不能为空") @Valid PurchaseItemCreateRequest> items
 ) {

@@ -1,5 +1,6 @@
 package com.store.conveniencestore.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -7,6 +8,10 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record CategoryRequest(
 
+        @Schema(
+                description = "分类名称",
+                example = "饮料"
+        )
         @NotBlank(message = "分类名称不能为空")
         String name
 
