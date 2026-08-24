@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.store.conveniencestore.mapper.ProductMapper">
+
+    <!--
+        定义数据库字段和 Product 属性之间的对应关系。
+    -->
+    <resultMap
+            id="ProductResultMap"
+            type="com.store.conveniencestore.entity.Product">
+
+        <id column="id" property="id"/>
+
+        <result column="name" property="name"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="sale_price" property="salePrice"/>
+        <result column="stock" property="stock"/>
+    </resultMap>
+
+    <!--
+        公共商品字段列表。
+        后面的查询可以通过 include 重复使用。
+    -->
+    <sql id="ProductColumnList">
+        id,
+        name,
+        category_id,
+        sale_price,
+        stock
+    </sql>
+
+    <!-- 查询全部商品 -->
+    <select
+            id="findAll"
+            resultMap="ProductResultMap">
+
+        SELECT
+        <include refid="ProductColumnList"/>
+        FROM product
+    </select>
+
+    <!-- 根据编号查询商品 -->
+    <select
+            id="findById"
+            resultMap="ProductResultMap">
+
+        SELECT
+        <include refid="ProductColumnList"/>
+        FROM product
+        WHERE id = #{id}
+    </select>
+
+    <!-- 新增商品 -->
+    <insert
+            id="insert"
+            parameterType="com.store.conveniencestore.entity.Product"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
+
+        INSERT INTO product (
+        name,
+        category_id,
+        sale_price,
+        stock
+        )
+        VALUES (
+        #{name},
+        #{categoryId},
+        #{salePrice},
+        #{stock}
+        )
+    </insert>
+
+    <!-- 修改商品基本信息 -->
+    <update
+            id="update"
+            parameterType="com.store.conveniencestore.entity.Product">
+
+        UPDATE product
+        SET name = #{name},
+        category_id = #{categoryId},
+        sale_price = #{salePrice}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 增加库存 -->
+    <update id="increaseStock">
+
+        UPDATE product
+        SET stock = stock + #{quantity}
+        WHERE id = #{productId}
+    </update>
+
+    <!-- 库存充足时才执行扣减 -->
+    <update id="decreaseStock">
+
+        UPDATE product
+        SET stock = stock - #{quantity}
+        WHERE id = #{productId}
+        AND stock >= #{quantity}
+    </update>
+
+    <!-- 删除商品 -->
+    <delete id="delete">
+
+        DELETE FROM product
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
