@@ -24,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public List<Product> search(String keyword, Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice){
+    public List<Product> search(String keyword, Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, Integer page, Integer size){
         if (categoryId != null && categoryId <= 0){
             throw new IllegalArgumentException(
                     "商品分类编号必须大于0"
@@ -51,10 +51,24 @@ public class ProductServiceImpl implements ProductService {
                     "最低价格不能大于最高价格"
             );
         }
+
+        if (page == null || page <= 0){
+            throw new IllegalArgumentException(
+                    "页码必须大于0"
+            );
+        }
+
+        if (size == null || size <= 0 || size > 100){
+            throw new IllegalArgumentException(
+                    "每页数量必须在1到100之间"
+            );
+        }
         //.trim():会删除字符串首尾的空格：
         String normalizedKeyword = keyword == null || keyword.isBlank() ? null : keyword.trim();
 
-        return productMapper.search(normalizedKeyword, categoryId, minPrice, maxPrice);
+        long offset = (long)(page - 1) * size; //计算要跳过多少数据
+
+        return productMapper.search(normalizedKeyword, categoryId, minPrice, maxPrice, offset, size);
     }
 
     @Override

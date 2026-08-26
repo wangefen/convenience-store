@@ -6,6 +6,7 @@ import com.store.conveniencestore.entity.Product;
 import com.store.conveniencestore.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ public class ProductController {
     private ProductService productService;
 
     @Operation(
-            summary = "查询商品列表",
-            description = "支持按照商品名称、分类和价格区间动态查询；不传参数时查询全部商品"
+            summary = "分页查询商品",
+            description = "支持按照商品名称、分类和价格区间动态查询；不传参数时查询全部商品,并按照页码返回商品"
     )
     @GetMapping
     public ApiResponse<List<Product>> search(
@@ -50,13 +51,26 @@ public class ProductController {
             @Parameter(description = "最高销售价格", example = "10.00")
             @RequestParam(required = false)
             @PositiveOrZero(message = "最高价格不能小于0")
-            BigDecimal maxPrice
+            BigDecimal maxPrice,
+
+            @Parameter(description = "页码，从1开始", example = "1")
+            @RequestParam(defaultValue = "1")
+            @Positive(message = "页码必须大于0")
+                    Integer page,
+
+            @Parameter(description = "每页数量，最大100", example = "10")
+            @RequestParam(defaultValue = "10")
+            @Positive(message = "每页数量必须大于0")
+            @Max(value = 100, message = "每页数量不能超过100")
+            Integer size
     ) {
         List<Product> products = productService.search(
                 keyword,
                 categoryId,
                 minPrice,
-                maxPrice
+                maxPrice,
+                page,
+                size
         );
 
         return ApiResponse.success(products);

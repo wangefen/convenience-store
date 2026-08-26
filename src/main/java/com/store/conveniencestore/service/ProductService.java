@@ -7,7 +7,13 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<Product> search(String keyword, Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice);
+    List<Product> search(
+                         String keyword,
+                         Integer categoryId,
+                         BigDecimal minPrice,
+                         BigDecimal maxPrice,
+                         Integer page,
+                         Integer size);
 
     Product findById(Integer id);
 

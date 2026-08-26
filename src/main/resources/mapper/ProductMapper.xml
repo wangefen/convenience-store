@@ -59,6 +59,9 @@
         </where>
         <!--按照商品的 id 对查询结果进行排序。默认升序-->
         ORDER BY id
+
+        LIMIT #{size}
+        OFFSET #{offset}
     </select>
 
     <!-- 根据编号查询商品 -->

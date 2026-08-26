@@ -19,8 +19,9 @@ public interface ProductMapper {
             @Param("keyword") String keyword,
             @Param("categoryId") Integer categoryId,
             @Param(value = "minPrice") BigDecimal minPrice,
-            @Param("maxPrice") BigDecimal maxPrice
-
+            @Param("maxPrice") BigDecimal maxPrice,
+            @Param("offset") Long offset,
+            @Param("size") Integer size
     );
 
     /**
