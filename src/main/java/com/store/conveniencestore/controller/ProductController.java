@@ -7,12 +7,14 @@ import com.store.conveniencestore.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(
@@ -25,12 +27,38 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @Operation(summary = "查询全部商品",
-            description = "查询并返回系统中的全部商品"
+    @Operation(
+            summary = "查询商品列表",
+            description = "支持按照商品名称、分类和价格区间动态查询；不传参数时查询全部商品"
     )
     @GetMapping
-    public ApiResponse<List<Product>> findAll(){
-        List<Product> products = productService.findAll();
+    public ApiResponse<List<Product>> search(
+            @Parameter(description = "商品名称关键词", example = "可乐")
+            @RequestParam(required = false)
+            String keyword,
+
+            @Parameter(description = "商品分类编号", example = "1")
+            @RequestParam(required = false)
+            @Positive(message = "商品分类编号必须大于0")
+            Integer categoryId,
+
+            @Parameter(description = "最低销售价格", example = "2.00")
+            @RequestParam(required = false)
+            @PositiveOrZero(message = "最低价格不能小于0")
+            BigDecimal minPrice,
+
+            @Parameter(description = "最高销售价格", example = "10.00")
+            @RequestParam(required = false)
+            @PositiveOrZero(message = "最高价格不能小于0")
+            BigDecimal maxPrice
+    ) {
+        List<Product> products = productService.search(
+                keyword,
+                categoryId,
+                minPrice,
+                maxPrice
+        );
+
         return ApiResponse.success(products);
     }
 

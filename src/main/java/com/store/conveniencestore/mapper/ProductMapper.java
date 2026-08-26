@@ -3,6 +3,7 @@ package com.store.conveniencestore.mapper;
 import com.store.conveniencestore.entity.Product;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -10,9 +11,17 @@ import java.util.List;
 public interface ProductMapper {
 
     /**
-     * 查询全部商品。
+     * 根据可选条件查询商品。
+     *
+     * 所有参数都为空时查询全部商品。
      */
-    List<Product> findAll();
+    List<Product> search(
+            @Param("keyword") String keyword,
+            @Param("categoryId") Integer categoryId,
+            @Param(value = "minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice
+
+    );
 
     /**
      * 根据商品编号查询商品。

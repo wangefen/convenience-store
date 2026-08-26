@@ -32,14 +32,33 @@
         stock
     </sql>
 
-    <!-- 查询全部商品 -->
-    <select
-            id="findAll"
-            resultMap="ProductResultMap">
 
+    <!--根据可选条件动态查询商品-->
+    <select id="search" resultMap="ProductResultMap">
         SELECT
         <include refid="ProductColumnList"/>
         FROM product
+
+        <!--<where> 里面至少有一个 <if> 条件成立，MyBatis才会生成 WHERE-->
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+
+            <if test = "categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+
+            <if test="minPrice != null">
+                AND sale_price &gt;= #{minPrice}
+            </if>
+
+            <if test="maxPrice != null">
+                AND sale_price &lt;= #{maxPrice}
+            </if>
+        </where>
+        <!--按照商品的 id 对查询结果进行排序。默认升序-->
+        ORDER BY id
     </select>
 
     <!-- 根据编号查询商品 -->

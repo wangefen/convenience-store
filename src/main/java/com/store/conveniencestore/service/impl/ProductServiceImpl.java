@@ -22,9 +22,33 @@ public class ProductServiceImpl implements ProductService {
         this.categoryMapper = categoryMapper;
     }
 
+
     @Override
-    public List<Product> findAll() {
-        return productMapper.findAll();
+    public List<Product> search(String keyword, Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice){
+        if (categoryId != null && categoryId <= 0){
+            throw new IllegalArgumentException(
+                    "商品分类编号必须大于0"
+            );
+        }
+
+        if (minPrice != null && minPrice.signum() <= 0){
+            throw new IllegalArgumentException(
+                    "最低价格不能小于0"
+            );
+        }
+
+        if (minPrice != null
+                && maxPrice != null
+                && minPrice.compareTo(maxPrice) > 0) {
+
+            throw new IllegalArgumentException(
+                    "最低价格不能大于最高价格"
+            );
+        }
+        //.trim():会删除字符串首尾的空格：
+        String normalizedKeyword = keyword == null || keyword.isBlank() ? null : keyword.trim();
+
+        return productMapper.search(normalizedKeyword, categoryId, minPrice, maxPrice);
     }
 
     @Override
