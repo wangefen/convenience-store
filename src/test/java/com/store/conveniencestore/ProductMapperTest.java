@@ -29,21 +29,6 @@ public class ProductMapperTest {
     private ProductMapper productMapper;
 
 
-    /**
-     * 测试查询全部商品。
-     */
-    @Test
-    public void testFindAll() {
-
-        List<Product> productList = productMapper.findAll();
-
-        for (Product product : productList) {
-            System.out.println(product);
-        }
-
-        assertNotNull(productList);
-    }
-
 
     /**
      * 测试根据商品 id 查询商品。

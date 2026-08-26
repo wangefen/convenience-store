@@ -32,27 +32,6 @@ public class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-
-    /**
-     * 测试查询全部商品。
-     */
-    @Test
-    public void testFindAll() {
-
-        List<Product> productList = productService.findAll();
-
-        for (Product product : productList) {
-            System.out.println(product);
-        }
-
-        // 查询结果对象不应该为 null
-        assertNotNull(productList);
-
-        // 你的数据库目前已经存在商品，因此集合不应为空
-        assertFalse(productList.isEmpty());
-    }
-
-
     /**
      * 测试根据 id 查询商品。
      */

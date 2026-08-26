@@ -31,9 +31,15 @@ public class ProductServiceImpl implements ProductService {
             );
         }
 
-        if (minPrice != null && minPrice.signum() <= 0){
+        if (minPrice != null && minPrice.signum() < 0){
             throw new IllegalArgumentException(
                     "最低价格不能小于0"
+            );
+        }
+
+        if (maxPrice != null && maxPrice.signum() < 0) {
+            throw new IllegalArgumentException(
+                    "最高价格不能小于0"
             );
         }
 
