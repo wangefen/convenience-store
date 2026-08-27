@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 public class SysUser {
     private Integer id;
     private String username;
-    private String passward;
+    private String password;
     private Boolean enabled;
-    private LocalDateTime creaTime;
+    private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
     public Integer getId() {
@@ -26,12 +26,12 @@ public class SysUser {
         this.username = username;
     }
 
-    public String getPassward() {
-        return passward;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPassward(String passward) {
-        this.passward = passward;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Boolean getEnabled() {
@@ -42,12 +42,12 @@ public class SysUser {
         this.enabled = enabled;
     }
 
-    public LocalDateTime getCreaTime() {
-        return creaTime;
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
-    public void setCreaTime(LocalDateTime creaTime) {
-        this.creaTime = creaTime;
+    public void setCreaTime(LocalDateTime createTime) {
+        this.createTime = createTime;
     }
 
     public LocalDateTime getUpdateTime() {

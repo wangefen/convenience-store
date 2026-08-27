@@ -37,13 +37,13 @@ public class CustomUserDetailsService
         List<SimpleGrantedAuthority> authorities = sysUserMapper
                 .findRoleCodeByUserId(sysUser.getId())
                 .stream()
-                .map(roleCode -> new SimpleGrantedAuthority("ROLE" + roleCode)
+                .map(roleCode -> new SimpleGrantedAuthority("ROLE_" + roleCode)
                 )
                 .toList();
 
         return User.builder()
                 .username(sysUser.getUsername())
-                .password(sysUser.getPassward())
+                .password(sysUser.getPassword())
                 .disabled(!Boolean.TRUE.equals(sysUser.getEnabled()))
                 .authorities(authorities)
                 .build();

@@ -1,10 +1,12 @@
 package com.store.conveniencestore.mapper;
 
 import com.store.conveniencestore.entity.SysUser;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+@Mapper
 public interface SysUserMapper {
 
     @Select("SELECT id, username,password,enabled,create_time,update_time FROM sys_user WHERE username = #{username}")
