@@ -46,7 +46,7 @@ public class SysUser {
         return createTime;
     }
 
-    public void setCreaTime(LocalDateTime createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 

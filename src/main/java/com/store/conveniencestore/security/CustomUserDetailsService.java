@@ -7,11 +7,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 //UserDetails 是 Spring Security 能看懂的“用户登录与权限信息标准格式”。
-
+@Service
 public class CustomUserDetailsService
         implements UserDetailsService {
 
